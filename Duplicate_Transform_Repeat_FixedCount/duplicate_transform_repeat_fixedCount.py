@@ -17,6 +17,22 @@ except ImportError:
     sys.exit(1)
 
 
+# Function to prompt the user for the element name
+def prompt_for_element_name(default_name):
+    pass
+
+# Function to prompt the user for the axis of duplication
+def prompt_for_axis():
+    pass
+
+# Function to prompt the user for the spacing between duplicates
+def prompt_for_spacing():
+    pass
+
+# Function to prompt the user for the number of duplicates
+def prompt_for_duplicate_count():
+    pass
+
 def main(argv):
     """Main function"""
     if scribus.selectionCount() != 1:
