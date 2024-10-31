@@ -19,7 +19,10 @@ except ImportError:
 
 # Function to prompt the user for the element name
 def prompt_for_element_name(default_name):
-    pass
+    name = scribus.valueDialog(
+            "Element Name", "Duplicates will have '_00X' suffix added.\nEnter the name of the element:", default_name
+        )
+    return name
 
 # Function to prompt the user for the axis of duplication
 def prompt_for_axis():
@@ -38,6 +41,7 @@ def main(argv):
     if scribus.selectionCount() != 1:
         scribus.messageBox("Error", "Please select exactly one element.", icon=scribus.ICON_NONE)
         return
+    element_name = prompt_for_element_name(selected_element)
     pass
 
 def main_wrapper(argv):
