@@ -9,6 +9,7 @@ Compatibility: Scribus v1.6.x, Fedora Workstation 40
 """
 
 import sys
+import fractions
 
 try:
     import scribus
@@ -16,6 +17,19 @@ except ImportError:
     print("This Python script is written for the Scribus scripting interface.")
     print("It can only be run from within Scribus.")
     sys.exit(1)
+
+
+def get_unit_name():
+    """Return the name of the unit based on the integer value."""
+    unit_names = {
+        0: "pt",
+        1: "mm",
+        2: "in",
+        3: "picas",
+        4: "cm",
+        5: "cicero",
+    }
+    return unit_names.get(scribus.getUnit(), "Unknown unit")
 
 
 # Function to prompt the user for the element name
@@ -56,7 +70,34 @@ def prompt_for_axis():
 
 # Function to prompt the user for the spacing between duplicates
 def prompt_for_spacing():
-    pass
+    unit = get_unit_name()
+    while True:
+        # Prompt the user to enter the spacing, reminding them of the unit
+        spacing_input = scribus.valueDialog(
+            "Spacing",
+            f"Document Unit({unit})\nEnter the spacing between duplicates e.g. 4, 2.34, or 4/32:",
+        )
+
+        try:
+            if "/" in spacing_input:
+                spacing = float(fractions.Fraction(spacing_input))
+            else:
+                spacing = float(spacing_input)
+
+            if spacing >= 0:
+                return spacing
+
+            # If the spacing is negative, show an error message
+            scribus.messageBox(
+                "Error", "Spacing must be 0 or greater.", icon=scribus.ICON_WARNING
+            )
+
+        except ValueError:
+            scribus.messageBox(
+                "Error",
+                "Invalid input. Please enter a valid number (e.g., 4, 2.34, or 4/32).",
+                icon=scribus.ICON_WARNING,
+            )
 
 
 # Function to prompt the user for the number of duplicates
@@ -74,6 +115,7 @@ def main(argv):
     selected_element = scribus.getSelectedObject(0)
     element_name = prompt_for_element_name(selected_element)
     axis = prompt_for_axis()
+    spacing = prompt_for_spacing()
     print(f"Original name: {selected_element}")
     print(f"Confirmed name: {element_name}")
     pass
