@@ -7,6 +7,7 @@ Author: Shin Tamaki
 Version/Date: 1.0, 2024-10-01
 Compatibility: Scribus v1.6.x, Fedora Workstation 40
 """
+
 import sys
 
 try:
@@ -20,29 +21,63 @@ except ImportError:
 # Function to prompt the user for the element name
 def prompt_for_element_name(default_name):
     name = scribus.valueDialog(
-            "Element Name", "Duplicates will have '_00X' suffix added.\nEnter the name of the element:", default_name
-        )
+        "Element Name",
+        "Duplicates will have '_00X' suffix added.\nEnter the name of the element:",
+        default_name,
+    )
     return name
+
 
 # Function to prompt the user for the axis of duplication
 def prompt_for_axis():
+    while True:
+        # Display a choice dialog for the user to select the axis
+        axis = scribus.valueDialog(
+            "Axis for Duplication",
+            "Enter 'X' for horizontal or 'Y' for vertical:",
+            "X",
+        )
+
+        # Normalize the input to uppercase for easier comparison
+        axis = axis.strip().upper()
+
+        # Check if the user made a valid selection
+        if axis in ["X", "Y"]:
+            return axis
+
+        # If the selection is invalid, show an error message
+        scribus.messageBox(
+            "Error",
+            "Invalid axis selected. Please enter 'X' or 'Y'.",
+            icon=scribus.ICON_WARNING,
+        )
     pass
+
 
 # Function to prompt the user for the spacing between duplicates
 def prompt_for_spacing():
     pass
 
+
 # Function to prompt the user for the number of duplicates
 def prompt_for_duplicate_count():
     pass
 
+
 def main(argv):
     """Main function"""
     if scribus.selectionCount() != 1:
-        scribus.messageBox("Error", "Please select exactly one element.", icon=scribus.ICON_NONE)
+        scribus.messageBox(
+            "Error", "Please select exactly one element.", icon=scribus.ICON_NONE
+        )
         return
+    selected_element = scribus.getSelectedObject(0)
     element_name = prompt_for_element_name(selected_element)
+    axis = prompt_for_axis()
+    print(f"Original name: {selected_element}")
+    print(f"Confirmed name: {element_name}")
     pass
+
 
 def main_wrapper(argv):
     """The main_wrapper() function disables redrawing, sets a sensible generic
