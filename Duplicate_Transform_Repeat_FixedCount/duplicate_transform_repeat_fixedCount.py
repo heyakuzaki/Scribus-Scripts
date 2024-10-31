@@ -102,7 +102,37 @@ def prompt_for_spacing():
 
 # Function to prompt the user for the number of duplicates
 def prompt_for_duplicate_count():
-    pass
+    while True:
+        # Prompt the user to enter the number of duplicates
+        count_input = scribus.valueDialog(
+            "Number of Duplicates",
+            "Enter the number of duplicates (whole number):",
+            "1",
+        )
+
+        # Check if the user canceled the dialog
+        if count_input == "":
+            return None
+
+        try:
+            count = int(count_input)
+            if count > 0:
+                return count
+
+            # If the count is not positive, show an error message
+            scribus.messageBox(
+                "Error",
+                "Number of duplicates must be greater than 0.",
+                icon=scribus.ICON_WARNING,
+            )
+
+        except ValueError:
+            # If the input cannot be converted to an integer, show an error message
+            scribus.messageBox(
+                "Error",
+                "Invalid input. Please enter a valid whole number.",
+                icon=scribus.ICON_WARNING,
+            )
 
 
 def main(argv):
@@ -116,6 +146,7 @@ def main(argv):
     element_name = prompt_for_element_name(selected_element)
     axis = prompt_for_axis()
     spacing = prompt_for_spacing()
+    duplicate_count = prompt_for_duplicate_count()
     print(f"Original name: {selected_element}")
     print(f"Confirmed name: {element_name}")
     pass
