@@ -19,6 +19,9 @@ except ImportError:
 
 def main(argv):
     """Main function"""
+    if scribus.selectionCount() != 1:
+        scribus.messageBox("Error", "Please select exactly one element.", icon=scribus.ICON_NONE)
+        return
     pass
 
 def main_wrapper(argv):
