@@ -34,30 +34,30 @@ def get_unit_name():
 
 # Function to prompt the user for the element name
 def prompt_for_element_name(default_name):
-    name = scribus.valueDialog(
+    name_input = scribus.valueDialog(
         "Element Name",
         "Duplicates will have '_00X' suffix added.\nEnter the name of the element:",
         default_name,
     )
-    return name
+    if name_input == "":
+        sys.exit(0)
+    return name_input
 
 
 # Function to prompt the user for the axis of duplication
 def prompt_for_axis():
     while True:
-        # Display a choice dialog for the user to select the axis
-        axis = scribus.valueDialog(
+        axis_input = scribus.valueDialog(
             "Axis for Duplication",
             "Enter 'X' for horizontal or 'Y' for vertical:",
             "X",
         )
-
-        # Normalize the input to uppercase for easier comparison
-        axis = axis.strip().upper()
+        if axis_input == "":
+            sys.exit(0)
 
         # Check if the user made a valid selection
-        if axis in ["X", "Y"]:
-            return axis
+        if axis_input.strip().upper() in ["X", "Y"]:
+            return axis_input
 
         # If the selection is invalid, show an error message
         scribus.messageBox(
@@ -77,15 +77,18 @@ def prompt_for_spacing():
             "Spacing",
             f"Document Unit({unit})\nEnter the spacing between duplicates e.g. 4, 2.34, or 4/32:",
         )
+        if spacing_input == "":
+            sys.exit(0)
 
         try:
-            if "/" in spacing_input:
-                spacing = float(fractions.Fraction(spacing_input))
-            else:
-                spacing = float(spacing_input)
+            spacing_input = (
+                float(fractions.Fraction(spacing_input))
+                if "/" in spacing_input
+                else float(spacing_input)
+            )
 
-            if spacing >= 0:
-                return spacing
+            if spacing_input >= 0:
+                return spacing_input
 
             # If the spacing is negative, show an error message
             scribus.messageBox(
@@ -109,15 +112,12 @@ def prompt_for_duplicate_count():
             "Enter the number of duplicates (whole number):",
             "1",
         )
-
-        # Check if the user canceled the dialog
         if count_input == "":
-            return None
+            sys.exit(0)
 
         try:
-            count = int(count_input)
-            if count > 0:
-                return count
+            if int(count_input) > 0:
+                return int(count_input)
 
             # If the count is not positive, show an error message
             scribus.messageBox(
@@ -127,7 +127,6 @@ def prompt_for_duplicate_count():
             )
 
         except ValueError:
-            # If the input cannot be converted to an integer, show an error message
             scribus.messageBox(
                 "Error",
                 "Invalid input. Please enter a valid whole number.",
