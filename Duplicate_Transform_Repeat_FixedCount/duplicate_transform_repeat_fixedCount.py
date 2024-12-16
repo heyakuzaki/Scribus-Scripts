@@ -163,13 +163,30 @@ def main(argv):
         )
         return
     selected_element = scribus.getSelectedObject(0)
+    x, y = scribus.getPosition(selected_element)
+
+
     element_name = prompt_for_element_name(selected_element)
     axis = prompt_for_axis()
     spacing = prompt_for_spacing()
+    consider_size = prompt_for_enable_size_consideration()
     duplicate_count = prompt_for_duplicate_count()
-    print(f"Original name: {selected_element}")
-    print(f"Confirmed name: {element_name}")
-    pass
+
+    for i in range(duplicate_count):
+        duplicate = scribus.duplicateObjects(selected_element)
+        duplicate = scribus.setItemName(f'{element_name}_{str(i).zfill(3)}', duplicate[0])
+
+        # TODO: The logic here is wrong, as it doesn't take account object width.
+        if consider_size:
+            object_width, object_height = scribus.getSize(duplicate)
+        else:
+            object_width = 0
+            object_height = 0
+
+        if axis == "X":
+            scribus.moveObjectAbs(x + (i + 1) * (object_width + spacing), y, duplicate)
+        else:
+            scribus.moveObjectAbs(x, y + (i + 1) * (object_height + spacing), duplicate)
 
 
 def main_wrapper(argv):
