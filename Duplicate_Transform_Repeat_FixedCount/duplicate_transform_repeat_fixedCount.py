@@ -43,6 +43,27 @@ def prompt_for_element_name(default_name):
         sys.exit(0)
     return name_input
 
+# Function to prompt the user to enable size consideration
+def prompt_for_enable_size_consideration():
+    response = scribus.valueDialog(
+        "Enable Size Consideration",
+        "Enable size consideration for duplicate placement?(Yes/No)",
+        "No",
+    )
+
+    if response == "":
+        sys.exit(0)
+    elif response.strip().upper() == "YES":
+        return True
+    elif response.strip().upper() == "NO":
+        return False
+    else:
+        scribus.messageBox(
+            "Error",
+            "Invalid input. Please enter 'Yes' or 'No'.",
+            icon=scribus.ICON_WARNING,
+        )
+        return prompt_for_enable_size_consideration()
 
 # Function to prompt the user for the axis of duplication
 def prompt_for_axis():
